@@ -1,6 +1,6 @@
 gonna make a super basic mario level  
 
-right now i have:
+right now i have:  
 moveable red ball  
 
 going to have:  
