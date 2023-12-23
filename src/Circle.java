@@ -4,8 +4,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Circle extends JPanel implements KeyListener {
-    private int circleX = 25;
+    // start should be (5, 435)
+    private int circleX = 5;
     private int circleY = 435;
+
+    private static int frameWidth = 500;
+    private static int frameHeight = 500;
+
+    private int yBottomBoundary = frameHeight - 75;
+    private int yTopBoundary = 0;
+    private int xRightBoundary = frameWidth - 38;
+    private int xLeftBoundary = 0;
 
     private boolean moveUp = false;
     private boolean moveDown = false;
@@ -69,27 +78,37 @@ public class Circle extends JPanel implements KeyListener {
 
    private void updateCirclePosition() {
         if (moveUp && !moveDown) {
-            circleY -= 10;
+            if (circleY - 5 >= yTopBoundary) {
+                circleY -= 5;
+            }
+
         } else if (moveDown && !moveUp) {
-            circleY += 10;
+            if (circleY + 5 <= yBottomBoundary) {
+                circleY += 5;
+            }
         }
 
         if (moveLeft && !moveRight) {
-            circleX -= 10;
+            if (circleX -5 >= xLeftBoundary) {
+                circleX -= 5;
+            }
         } else if (moveRight && !moveLeft) {
-            circleX += 10;
+            if (circleX + 5 <= xRightBoundary) {
+                circleX += 5;
+            }
         }
 
         repaint();
    }
 
     public static void main(String[] args) {
+        // make the frame
         JFrame frame = new JFrame("mario_level");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(frameWidth, frameHeight);
 
 
-        // create the frame
+        // make and add the circle
         Circle circle = new Circle();
         frame.add(circle);
 
