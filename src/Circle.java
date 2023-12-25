@@ -1,7 +1,10 @@
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.Timer;
 
 public class Circle extends JPanel implements KeyListener {
     // start should be (5, 435)
@@ -21,10 +24,23 @@ public class Circle extends JPanel implements KeyListener {
     private boolean moveRight = false;
     private boolean moveLeft = false;
 
+    private int gravity = 2;
+
+    private Timer timer;
+
     public Circle() {
         setFocusable(true); // allow JPanel to receive keyboard focus
         addKeyListener(this); // register the JPanel as a keylistener
         setFocusTraversalKeysEnabled(false); // allow simult input
+
+        // init and start timer
+        timer = new Timer(16, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyGravity();
+            }
+        });
+        timer.start();
     }
 
    @Override
@@ -41,9 +57,15 @@ public class Circle extends JPanel implements KeyListener {
         int key = e.getKeyCode();
 
        if (key == KeyEvent.VK_W) {
-           moveUp = true;
+           // if player is already in the air, do not let them jump mid-air
+           // TODO: add ability to jump higher if key initially held longer
+           if (circleY >= yBottomBoundary) {
+               moveUp = true;
+           }
        } else if (key == KeyEvent.VK_S) {
-           moveDown = true;
+           // moveDown = true;
+           // do not let the player move down, will allow them to fall faster when holding down
+           // and in the air in the future TODO
        } else if (key == KeyEvent.VK_A) {
            moveLeft = true;
        } else if (key == KeyEvent.VK_D) {
@@ -78,8 +100,10 @@ public class Circle extends JPanel implements KeyListener {
 
    private void updateCirclePosition() {
         if (moveUp && !moveDown) {
-            if (circleY - 5 >= yTopBoundary) {
-                circleY -= 5;
+            // move up
+            if (circleY - 5 >= yTopBoundary && !(circleY < yTopBoundary)) {
+                // this was previously 5
+                circleY -= 50;
             }
 
         } else if (moveDown && !moveUp) {
@@ -99,6 +123,19 @@ public class Circle extends JPanel implements KeyListener {
         }
 
         repaint();
+   }
+
+   private void applyGravity() {
+        if (circleY < yBottomBoundary) {
+            circleY += gravity;
+        }
+
+        // catch the char if it is somehow falling thru the map
+       if (circleY >= yBottomBoundary) {
+           circleY = yBottomBoundary;
+       }
+
+       repaint();
    }
 
     public static void main(String[] args) {
